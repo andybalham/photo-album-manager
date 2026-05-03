@@ -292,7 +292,7 @@ All operation service tests must pass.
 
 ---
 
-## Phase 5 — Main Form Layout and Splitter
+## Phase 5 — Main Form Layout and Splitter ✅ COMPLETE
 
 ### Goal
 Build the top-level `MainForm` layout: two panes separated by a splitter, with placeholder tab controls in each pane. No real content in the tabs yet.
@@ -321,13 +321,15 @@ Build the top-level `MainForm` layout: two panes separated by a splitter, with p
 
 6. On startup, if a saved path exists, populate the path labels. Do not load trees yet.
 
-### Checkpoint
+### Checkpoint ✅
 - `dotnet build` passes with no warnings
 - Launch the app manually and verify:
   - Splitter is draggable
   - Source and Target tabs each have a working folder picker that updates the label
   - Removed tab shows the derived-from label
   - Window remembers splitter position between runs
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. Layout in `Designer.cs` only; all behaviour in `MainForm.cs`.
 
 ---
 

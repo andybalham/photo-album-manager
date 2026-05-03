@@ -62,7 +62,7 @@ Work through `docs/implementation-plan.md` in order. Each phase has a checkpoint
 | 2 | Settings service ✅ |
 | 3 | FolderScanService ✅ |
 | 4 | FileOperationService ✅ |
-| 5 | MainForm layout and splitter |
+| 5 | MainForm layout and splitter ✅ |
 | 6 | FolderTreePanel |
 | 7 | FileListPanel |
 | 8 | PreviewPanel + ImageLoadService |
