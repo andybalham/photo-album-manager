@@ -57,6 +57,12 @@ public partial class FileListPanel : UserControl
         PopulateList();
     }
 
+    public void ClearFiles()
+    {
+        _files = [];
+        PopulateList();
+    }
+
     private void PopulateList()
     {
         IEnumerable<ImageFile> sorted = CurrentSort.Field == SortField.DateCreated

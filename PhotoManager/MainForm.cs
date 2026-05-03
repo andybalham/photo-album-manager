@@ -72,6 +72,7 @@ public partial class MainForm : Form
 
         btnSelectSource.Click += OnSelectSource;
         btnSelectTarget.Click += OnSelectTarget;
+        leftTabControl.SelectedIndexChanged += OnLeftTabChanged;
         splitContainer.SplitterMoved += OnSplitterMoved;
         Resize += OnFormResize;
         Move += OnFormMove;
@@ -162,6 +163,33 @@ public partial class MainForm : Form
         statusLabel.Text = $"{count} image(s)";
     }
 
+    // ── Left tab switch ───────────────────────────────────────────────────────
+
+    private async void OnLeftTabChanged(object? sender, EventArgs e)
+    {
+        var tree = leftTabControl.SelectedTab == tabSource ? _sourceTree
+                 : leftTabControl.SelectedTab == tabTarget ? _targetTree
+                 : _removedTree;
+
+        var folderPath = tree.SelectedFolderPath;
+        if (string.IsNullOrEmpty(folderPath))
+        {
+            _fileListPanel.ClearFiles();
+            return;
+        }
+
+        _activeFolderPath = folderPath;
+        _activeTree = tree;
+
+        var (_, sourceRoot, targetRoot) = GetContext();
+        var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
+        await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort);
+
+        var files = _fileListPanel.GetCurrentFiles().ToList();
+        if (files.Count > 0)
+            await OpenPreviewAsync(files[0]);
+    }
+
     // ── File list → preview ───────────────────────────────────────────────────
 
     private void OnFileSelected(object? sender, ImageFile file)
@@ -214,6 +242,24 @@ public partial class MainForm : Form
         // Refresh removed tree after any operation that affects it
         if (!string.IsNullOrEmpty(_settings.TargetFolderPath))
             await LoadRemovedTreeAsync(_settings.TargetFolderPath);
+
+        // Copy (source→target) or undo (removed→target): reload target tree + file list
+        var context = _previewPanel.Context;
+        if ((context == PreviewContext.Source || context == PreviewContext.Removed)
+            && !string.IsNullOrEmpty(_settings.TargetFolderPath))
+        {
+            await _targetTree.LoadRootAsync(_settings.TargetFolderPath, _settings.TargetFolderPath);
+
+            if (leftTabControl.SelectedTab == tabTarget)
+            {
+                var folderPath = _targetTree.SelectedFolderPath;
+                if (!string.IsNullOrEmpty(folderPath))
+                {
+                    var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
+                    await _fileListPanel.LoadFolderAsync(folderPath, _settings.TargetFolderPath, sort);
+                }
+            }
+        }
     }
 
     // ── Window persistence ────────────────────────────────────────────────────
