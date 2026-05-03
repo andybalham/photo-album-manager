@@ -62,15 +62,15 @@ public partial class PreviewPanel : UserControl
 
     private async void OnPrevClick(object? sender, EventArgs e)
     {
-        if (_files.Count == 0) return;
-        _index = (_index - 1 + _files.Count) % _files.Count;
+        if (_files.Count == 0 || _index <= 0) return;
+        _index--;
         await ShowCurrentAsync();
     }
 
     private async void OnNextClick(object? sender, EventArgs e)
     {
-        if (_files.Count == 0) return;
-        _index = (_index + 1) % _files.Count;
+        if (_files.Count == 0 || _index >= _files.Count - 1) return;
+        _index++;
         await ShowCurrentAsync();
     }
 
