@@ -50,7 +50,7 @@ PhotoManager/
 
 ---
 
-## Phase 1 — Solution Scaffold and Core Models
+## Phase 1 — Solution Scaffold and Core Models ✅ COMPLETE
 
 ### Goal
 Create a compiling solution with the correct project structure, NuGet references, and domain models. No UI beyond a blank form.
@@ -130,12 +130,14 @@ Create a compiling solution with the correct project structure, NuGet references
    - Minimum size: 900 × 600
    - Start position: `CenterScreen`
 
-### Checkpoint
+### Checkpoint ✅
 ```
 dotnet build
 dotnet test
 ```
 Both must pass with zero errors and zero test failures. The app must launch and show a blank window.
+
+**Result:** Build succeeded (0 errors). 1/1 tests passed. Note: `System.Text.Json` explicit package reference removed — already included in net10.0-windows SDK.
 
 ---
 

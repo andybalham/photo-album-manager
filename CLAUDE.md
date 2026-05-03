@@ -13,19 +13,21 @@ dotnet run --project PhotoManager     # launch the app
 
 ## Project Structure
 
-Not yet scaffolded. Target structure per `docs/implementation-plan.md`:
-
 ```
 PhotoManager/
 ├── PhotoManager.sln
 ├── PhotoManager/              (.NET 10 WinForms app)
-│   ├── Models/                ImageFile, SortOptions
-│   ├── Settings/              AppSettings, SettingsService
-│   ├── Services/              FolderScanService, FileOperationService, ImageLoadService
-│   ├── Controls/              FolderTreePanel, FileListPanel, PreviewPanel (UserControls)
-│   └── Helpers/               ImageFormatHelper, FileHelper
-└── PhotoManager.Tests/        (xUnit)
+│   ├── MainForm.cs / MainForm.Designer.cs
+│   ├── Program.cs
+│   ├── Models/                ImageFile.cs, SortOptions.cs  ✅
+│   ├── Helpers/               ImageFormatHelper.cs  ✅
+│   ├── Settings/              AppSettings.cs, SettingsService.cs  (Phase 2)
+│   ├── Services/              FolderScanService, FileOperationService, ImageLoadService  (Phases 3-4, 8)
+│   └── Controls/              FolderTreePanel, FileListPanel, PreviewPanel  (Phases 6-8)
+└── PhotoManager.Tests/        (xUnit, net10.0-windows)
 ```
+
+Note: `System.Text.Json` is not an explicit package reference — it is included in the net10.0-windows SDK.
 
 ## Architecture
 
@@ -56,7 +58,7 @@ Work through `docs/implementation-plan.md` in order. Each phase has a checkpoint
 
 | Phase | Goal |
 |---|---|
-| 1 | Solution scaffold, models, helpers |
+| 1 | Solution scaffold, models, helpers ✅ |
 | 2 | Settings service |
 | 3 | FolderScanService |
 | 4 | FileOperationService |
