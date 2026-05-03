@@ -1,3 +1,6 @@
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Text;
 using PhotoManager.Helpers;
 using PhotoManager.Models;
 
@@ -18,7 +21,8 @@ public class FolderScanService
                 {
                     var info = new FileInfo(path);
                     var relative = Path.GetRelativePath(rootPath, path);
-                    return new ImageFile(path, relative, info.Name, info.LastWriteTime, info.Length);
+                    var date = TryGetExifDate(path) ?? info.LastWriteTime;
+                    return new ImageFile(path, relative, info.Name, date, info.Length);
                 })
                 .ToList();
         });
@@ -45,6 +49,30 @@ public class FolderScanService
                 .EnumerateFiles(folderPath)
                 .Count(ImageFormatHelper.IsImageFile);
         });
+
+    // EXIF tag 0x9003 = DateTimeOriginal, 0x0132 = DateTime; format "yyyy:MM:dd HH:mm:ss"
+    private static DateTime? TryGetExifDate(string path)
+    {
+        try
+        {
+            using var img = Image.FromFile(path);
+            foreach (var tagId in new[] { 0x9003, 0x0132 })
+            {
+                try
+                {
+                    var prop = img.GetPropertyItem(tagId);
+                    if (prop?.Value == null) continue;
+                    var raw = Encoding.ASCII.GetString(prop.Value).TrimEnd('\0');
+                    if (DateTime.TryParseExact(raw, "yyyy:MM:dd HH:mm:ss",
+                            null, System.Globalization.DateTimeStyles.None, out var dt))
+                        return dt;
+                }
+                catch (ArgumentException) { }
+            }
+        }
+        catch { }
+        return null;
+    }
 
     private static bool IsRemovedFolder(string path) =>
         string.Equals(Path.GetFileName(path), "_removed", StringComparison.OrdinalIgnoreCase);
