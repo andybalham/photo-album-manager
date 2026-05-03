@@ -247,7 +247,7 @@ All scan service tests must pass.
 
 ---
 
-## Phase 4 — File Operation Service
+## Phase 4 — File Operation Service ✅ COMPLETE
 
 ### Goal
 Implement the three file operations (copy, remove, undo) as a tested service. No UI yet.
@@ -282,11 +282,13 @@ Implement the three file operations (copy, remove, undo) as a tested service. No
    - `UndoRemoveAsync` moves the file back to the target; `_removed` copy no longer exists
    - `UndoRemoveAsync` returns `false` when target already exists
 
-### Checkpoint
+### Checkpoint ✅
 ```
 dotnet test
 ```
 All operation service tests must pass.
+
+**Result:** 18/18 tests passed (5 new file operation tests + 13 existing).
 
 ---
 
