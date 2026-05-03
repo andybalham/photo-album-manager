@@ -128,8 +128,7 @@ partial class MainForm
         MinimumSize = new Size(900, 600);
         StartPosition = FormStartPosition.Manual;
         Text = "Photo Album Manager";
-        Icon = SystemIcons.Application;
-        MainMenuStrip = menuStrip;
+MainMenuStrip = menuStrip;
         Controls.Add(splitContainer);
         Controls.Add(menuStrip);
         Controls.Add(statusStrip);

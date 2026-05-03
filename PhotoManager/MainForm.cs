@@ -22,8 +22,9 @@ public partial class MainForm : Form
     private string _activeFolderPath = string.Empty;
     private FolderTreePanel? _activeTree;
     private bool _isLoading = true;
+    private Icon? _appIcon;
 
-    public MainForm(AppSettings settings)
+    public MainForm(AppSettings settings, Icon? appIcon = null)
     {
         _settings = settings;
         _scanService = new FolderScanService();
@@ -31,6 +32,12 @@ public partial class MainForm : Form
         _imageService = new ImageLoadService();
 
         InitializeComponent();
+
+        if (appIcon != null)
+        {
+            Icon = appIcon;
+            _appIcon = appIcon;
+        }
 
         // Restore window bounds before any layout occurs
         if (_settings.WindowWidth > 0 && _settings.WindowHeight > 0)
@@ -350,24 +357,8 @@ public partial class MainForm : Form
 
     private void OnAboutClick(object? sender, EventArgs e)
     {
-        var version = Environment.Version;
-        MessageBox.Show(
-            $"""
-            Photo Album Manager  ·  .NET {version}
-
-            Keyboard Shortcuts
-            ──────────────────
-            F2              Toggle File List / Preview
-
-            In Preview:
-              ←  /  →       Previous / Next image
-              C             Copy to Target  (Source tab)
-              R             Remove          (Target tab)
-              U             Undo remove     (Removed tab)
-            """,
-            "About",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Information);
+        using var about = new AboutForm(_appIcon);
+        about.ShowDialog(this);
     }
 
     // ── Status messages ───────────────────────────────────────────────────────
