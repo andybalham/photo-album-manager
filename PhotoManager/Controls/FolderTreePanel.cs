@@ -31,15 +31,33 @@ public partial class FolderTreePanel : UserControl
         node.Expand();
     }
 
-    public void RemoveFileNode(string folderPath)
-    {
-        // Phase 8
-    }
+    public void RemoveFileNode(string folderPath) => _ = RefreshNodeAsync(folderPath);
 
     public async Task RefreshNodeAsync(string folderPath)
     {
-        // Phase 8
-        await Task.CompletedTask;
+        var node = FindNode(treeView.Nodes, folderPath);
+        if (node == null) return;
+
+        var count = await _scanService.GetImageCountAsync(folderPath);
+        if (count > 0) return;
+
+        var parent = node.Parent;
+        node.Remove();
+
+        if (parent?.Tag is string parentPath)
+            await RefreshNodeAsync(parentPath);
+    }
+
+    private static TreeNode? FindNode(TreeNodeCollection nodes, string folderPath)
+    {
+        foreach (TreeNode node in nodes)
+        {
+            if (node.Tag is string p && p.Equals(folderPath, StringComparison.OrdinalIgnoreCase))
+                return node;
+            var found = FindNode(node.Nodes, folderPath);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     private static TreeNode MakeNode(string folderPath)

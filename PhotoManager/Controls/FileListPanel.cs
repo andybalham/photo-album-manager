@@ -45,6 +45,11 @@ public partial class FileListPanel : UserControl
         UpdateSortButtons();
     }
 
+    public IReadOnlyList<ImageFile> GetCurrentFiles() =>
+        listView.Items.Cast<ListViewItem>()
+            .Select(i => (ImageFile)i.Tag!)
+            .ToList();
+
     public void RemoveFile(ImageFile file)
     {
         _files.Remove(file);

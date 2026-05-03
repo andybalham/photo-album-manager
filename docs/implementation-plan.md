@@ -473,7 +473,7 @@ Implement `PreviewPanel` — a user control showing the full image preview with 
 
 7. The action button must be disabled if no file is loaded.
 
-### Checkpoint
+### Checkpoint ✅
 - `dotnet build` passes
 - Launch the app and verify:
   - Double-clicking a file in the file list switches to Preview tab and shows the image
@@ -484,6 +484,8 @@ Implement `PreviewPanel` — a user control showing the full image preview with 
   - Remove (Target context): file moves to `_removed` on disk; disappears from target list
   - Undo (Removed context): file moves back to target on disk; disappears from removed list
   - After each action, preview advances to next file
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. `ImageLoadService` scales bitmaps to display size; HEIC codec error shown specifically. `PreviewPanel` handles all three contexts with sort cycling and action button guard. `MainForm` fully wired — tree refresh, file list sync, sort propagation.
 
 ---
 
