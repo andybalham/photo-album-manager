@@ -156,9 +156,10 @@ public partial class MainForm : Form
         _activeFolderPath = folderPath;
         _activeTree = sender as FolderTreePanel;
 
-        var (_, sourceRoot, _) = GetContext();
+        var (context, sourceRoot, _) = GetContext();
         var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
-        await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort);
+        var exclude = context == PreviewContext.Source ? GetSourceExcludeRoots() : null;
+        await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort, exclude);
 
         rightTabControl.SelectedTab = tabFileList;
 
@@ -194,9 +195,10 @@ public partial class MainForm : Form
         _activeFolderPath = folderPath;
         _activeTree = tree;
 
-        var (_, sourceRoot, _) = GetContext();
+        var (tabContext, sourceRoot, _) = GetContext();
         var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
-        await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort);
+        var exclude = tabContext == PreviewContext.Source ? GetSourceExcludeRoots() : null;
+        await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort, exclude);
 
         rightTabControl.SelectedTab = tabFileList;
 
@@ -390,6 +392,12 @@ public partial class MainForm : Form
         return (PreviewContext.Removed,
             Path.Combine(_settings.TargetFolderPath, "_removed"),
             _settings.TargetFolderPath);
+    }
+
+    private IReadOnlyList<string>? GetSourceExcludeRoots()
+    {
+        if (string.IsNullOrEmpty(_settings.TargetFolderPath)) return null;
+        return [_settings.TargetFolderPath];
     }
 
     private void OnSplitterMoved(object? sender, SplitterEventArgs e)

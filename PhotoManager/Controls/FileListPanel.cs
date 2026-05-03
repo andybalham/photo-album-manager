@@ -28,13 +28,14 @@ public partial class FileListPanel : UserControl
         Resize += (_, _) => ResizeNameColumn();
     }
 
-    public async Task LoadFolderAsync(string folderPath, string rootPath, SortOptions sort)
+    public async Task LoadFolderAsync(string folderPath, string rootPath, SortOptions sort,
+        IReadOnlyList<string>? excludeRoots = null)
     {
         _currentFolder = folderPath;
         _currentRoot = rootPath;
         CurrentSort = sort;
 
-        _files = [.. (await _scanService.GetFilesInFolderAsync(folderPath, rootPath))];
+        _files = [.. (await _scanService.GetFilesInFolderAsync(folderPath, rootPath, excludeRoots))];
         PopulateList();
         UpdateSortButtons();
     }

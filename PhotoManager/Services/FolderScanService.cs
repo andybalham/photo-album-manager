@@ -8,7 +8,8 @@ namespace PhotoManager.Services;
 
 public class FolderScanService
 {
-    public Task<IReadOnlyList<ImageFile>> GetFilesInFolderAsync(string folderPath, string rootPath) =>
+    public Task<IReadOnlyList<ImageFile>> GetFilesInFolderAsync(string folderPath, string rootPath,
+        IReadOnlyList<string>? excludeRoots = null) =>
         Task.Run<IReadOnlyList<ImageFile>>(() =>
         {
             if (!Directory.Exists(folderPath))
@@ -24,6 +25,8 @@ public class FolderScanService
                     var date = TryGetExifDate(path) ?? info.LastWriteTime;
                     return new ImageFile(path, relative, info.Name, date, info.Length);
                 })
+                .Where(f => excludeRoots == null || !excludeRoots.Any(
+                    root => File.Exists(Path.Combine(root, f.RelativePath))))
                 .ToList();
         });
 
