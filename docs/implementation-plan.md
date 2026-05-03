@@ -333,7 +333,7 @@ Build the top-level `MainForm` layout: two panes separated by a splitter, with p
 
 ---
 
-## Phase 6 — Folder Tree Panel (Left Pane)
+## Phase 6 — Folder Tree Panel (Left Pane) ✅ COMPLETE
 
 ### Goal
 Implement `FolderTreePanel` — a reusable user control containing the full recursive `TreeView` with lazy loading and folder image counts.
@@ -366,7 +366,7 @@ Implement `FolderTreePanel` — a reusable user control containing the full recu
 
 8. On startup, if a saved Source or Target path is valid, call `LoadRootAsync` automatically.
 
-### Checkpoint
+### Checkpoint ✅
 - `dotnet build` passes
 - Launch the app, select a source folder containing nested image subfolders, and verify:
   - Tree populates with only image-containing folders
@@ -374,6 +374,8 @@ Implement `FolderTreePanel` — a reusable user control containing the full recu
   - Expanding nodes lazy-loads children correctly
   - Selecting a node updates the status strip count
   - Tree loads automatically on relaunch if paths were saved
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. `RemoveFileNode` and `RefreshNodeAsync` stubbed for Phase 8. Removed tab tree root = `<target>\_removed\` so `RelativePath` on files is correct for `UndoRemoveAsync`.
 
 ---
 

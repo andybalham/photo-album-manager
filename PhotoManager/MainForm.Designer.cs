@@ -1,3 +1,5 @@
+using PhotoManager.Controls;
+
 namespace PhotoManager;
 
 partial class MainForm
@@ -6,32 +8,29 @@ partial class MainForm
 
     private SplitContainer splitContainer;
     private TabControl leftTabControl;
-    private TabPage tabSource;
-    private TabPage tabTarget;
-    private TabPage tabRemoved;
+    internal TabPage tabSource;
+    internal TabPage tabTarget;
+    internal TabPage tabRemoved;
     private TabControl rightTabControl;
-    private TabPage tabFileList;
-    private TabPage tabPreview;
+    internal TabPage tabFileList;
+    internal TabPage tabPreview;
     private StatusStrip statusStrip;
     internal ToolStripStatusLabel statusLabel;
 
-    // Source tab
+    // Source tab header controls
     private Button btnSelectSource;
-    private Label lblSourcePath;
-    private Label lblSourcePlaceholder;
+    internal Label lblSourcePath;
 
-    // Target tab
+    // Target tab header controls
     private Button btnSelectTarget;
-    private Label lblTargetPath;
-    private Label lblTargetPlaceholder;
+    internal Label lblTargetPath;
 
-    // Removed tab
+    // Removed tab header
     private Label lblRemovedDerived;
-    private Label lblRemovedPlaceholder;
 
-    // Right pane placeholders
-    private Label lblFileListPlaceholder;
-    private Label lblPreviewPlaceholder;
+    // Right pane placeholders (replaced in later phases)
+    internal Label lblFileListPlaceholder;
+    internal Label lblPreviewPlaceholder;
 
     protected override void Dispose(bool disposing)
     {
@@ -57,14 +56,11 @@ partial class MainForm
 
         btnSelectSource = new Button();
         lblSourcePath = new Label();
-        lblSourcePlaceholder = new Label();
 
         btnSelectTarget = new Button();
         lblTargetPath = new Label();
-        lblTargetPlaceholder = new Label();
 
         lblRemovedDerived = new Label();
-        lblRemovedPlaceholder = new Label();
 
         lblFileListPlaceholder = new Label();
         lblPreviewPlaceholder = new Label();
@@ -91,28 +87,23 @@ partial class MainForm
         leftTabControl.Dock = DockStyle.Fill;
         leftTabControl.TabPages.AddRange([tabSource, tabTarget, tabRemoved]);
 
-        // tabSource
+        // --- Source tab ---
         tabSource.Text = "Source";
         tabSource.Padding = new Padding(4);
-        ConfigureFolderTab(tabSource, btnSelectSource, lblSourcePath, lblSourcePlaceholder);
+        BuildFolderTabHeader(tabSource, btnSelectSource, lblSourcePath);
 
-        // tabTarget
+        // --- Target tab ---
         tabTarget.Text = "Target";
         tabTarget.Padding = new Padding(4);
-        ConfigureFolderTab(tabTarget, btnSelectTarget, lblTargetPath, lblTargetPlaceholder);
+        BuildFolderTabHeader(tabTarget, btnSelectTarget, lblTargetPath);
 
-        // tabRemoved
+        // --- Removed tab ---
         tabRemoved.Text = "Removed";
         tabRemoved.Padding = new Padding(4);
         lblRemovedDerived.Text = "Derived from Target folder";
         lblRemovedDerived.Dock = DockStyle.Top;
         lblRemovedDerived.Height = 24;
         lblRemovedDerived.ForeColor = SystemColors.GrayText;
-        lblRemovedPlaceholder.Text = "No folder selected";
-        lblRemovedPlaceholder.TextAlign = ContentAlignment.MiddleCenter;
-        lblRemovedPlaceholder.Dock = DockStyle.Fill;
-        lblRemovedPlaceholder.ForeColor = SystemColors.GrayText;
-        tabRemoved.Controls.Add(lblRemovedPlaceholder);
         tabRemoved.Controls.Add(lblRemovedDerived);
 
         // rightTabControl
@@ -154,8 +145,7 @@ partial class MainForm
         PerformLayout();
     }
 
-    private static void ConfigureFolderTab(
-        TabPage tab, Button btnSelect, Label lblPath, Label lblPlaceholder)
+    private static void BuildFolderTabHeader(TabPage tab, Button btnSelect, Label lblPath)
     {
         btnSelect.Text = "Select Folder…";
         btnSelect.Dock = DockStyle.Top;
@@ -166,13 +156,7 @@ partial class MainForm
         lblPath.ForeColor = SystemColors.GrayText;
         lblPath.Font = new Font(SystemFonts.DefaultFont.FontFamily, 8f);
 
-        lblPlaceholder.Text = "No folder selected";
-        lblPlaceholder.TextAlign = ContentAlignment.MiddleCenter;
-        lblPlaceholder.Dock = DockStyle.Fill;
-        lblPlaceholder.ForeColor = SystemColors.GrayText;
-
-        // Add in reverse order so DockStyle.Top stacks correctly
-        tab.Controls.Add(lblPlaceholder);
+        // Controls added last appear on top with DockStyle.Top
         tab.Controls.Add(lblPath);
         tab.Controls.Add(btnSelect);
     }
