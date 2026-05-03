@@ -186,7 +186,7 @@ All settings tests must pass. Manually run the app, close it, and verify `%APPDA
 
 ---
 
-## Phase 3 — Folder Scan Service
+## Phase 3 — Folder Scan Service ✅ COMPLETE
 
 ### Goal
 Implement the service that scans a folder tree and returns image files. No UI yet.
@@ -237,11 +237,13 @@ Implement the service that scans a folder tree and returns image files. No UI ye
    - `RelativePath` is correct relative to the root
    - `GetImageCountAsync` returns the correct count
 
-### Checkpoint
+### Checkpoint ✅
 ```
 dotnet test
 ```
 All scan service tests must pass.
+
+**Result:** 13/13 tests passed (9 new scan service tests + 4 existing). `TempFolderFixture` creates minimal valid 1×1 PNGs. `ContainsImages` recurses but skips `_removed` at every level.
 
 ---
 
