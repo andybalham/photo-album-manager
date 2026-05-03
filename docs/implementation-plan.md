@@ -1,4 +1,4 @@
-# Photo Manager — Claude Code Implementation Plan
+# Photo Album Manager — Claude Code Implementation Plan
 
 ## How to Use This Plan
 
@@ -126,7 +126,7 @@ Create a compiling solution with the correct project structure, NuGet references
    ```
 
 7. Create a blank `MainForm.cs` (just a resizable window, no controls yet):
-   - Title: `Photo Manager`
+   - Title: `Photo Album Manager`
    - Minimum size: 900 × 600
    - Start position: `CenterScreen`
 

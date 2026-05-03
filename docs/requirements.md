@@ -1,8 +1,8 @@
-# Photo Manager — Requirements
+# Photo Album Manager — Requirements
 
 ## 1. Overview
 
-Photo Manager is a .NET 10 Windows Forms desktop application for reviewing, curating, and organising image files across a source folder and a target folder. The user can copy images from source to target, remove images from target to a reserved `_removed` subfolder, and undo removals. All operations preserve folder structure relative to the root of each tree.
+Photo Album Manager is a .NET 10 Windows Forms desktop application for reviewing, curating, and organising image files across a source folder and a target folder. The user can copy images from source to target, remove images from target to a reserved `_removed` subfolder, and undo removals. All operations preserve folder structure relative to the root of each tree.
 
 ---
 
