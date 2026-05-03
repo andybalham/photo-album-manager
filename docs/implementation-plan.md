@@ -525,7 +525,7 @@ Harden the application against real-world failure conditions.
    - Disable the action button during an in-progress file operation to prevent double-clicks
    - Re-enable on completion (success or failure)
 
-### Checkpoint
+### Checkpoint ✅
 - `dotnet build` passes
 - Manually test the following scenarios:
   - [ ] Launch with a source path that has been deleted → warning label shown, no crash
@@ -533,6 +533,8 @@ Harden the application against real-world failure conditions.
   - [ ] Attempt to copy when no target is set → Copy button is disabled
   - [ ] Rapidly click Copy → second click is ignored while first is in progress
   - [ ] Navigate a folder with 1 image, act on it → blank preview state, no crash
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. Warning label shown in FolderTreePanel for invalid saved paths. Copy button disabled with tooltip when no target set. Skip messages shown on status strip for 3s via CancellationTokenSource (cancels if new message arrives). IOException/UnauthorizedAccessException already guarded in Phase 8. Empty-folder cleanup already handled via RefreshNodeAsync.
 
 ---
 

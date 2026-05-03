@@ -66,7 +66,7 @@ Work through `docs/implementation-plan.md` in order. Each phase has a checkpoint
 | 6 | FolderTreePanel ✅ |
 | 7 | FileListPanel ✅ |
 | 8 | PreviewPanel + ImageLoadService ✅ |
-| 9 | Error handling and edge cases |
+| 9 | Error handling and edge cases ✅ |
 | 10 | Polish, keyboard shortcuts, window persistence |
 
 ## Key Constraints

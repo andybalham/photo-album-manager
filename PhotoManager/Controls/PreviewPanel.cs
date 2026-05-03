@@ -10,6 +10,7 @@ public partial class PreviewPanel : UserControl
     private readonly ImageLoadService _imageService;
     private readonly FileOperationService _fileOpService;
 
+    private readonly ToolTip _toolTip = new();
     private List<ImageFile> _files = [];
     private int _index = -1;
     private PreviewContext _context;
@@ -21,6 +22,7 @@ public partial class PreviewPanel : UserControl
 
     public event EventHandler<ImageFile>? FileActioned;
     public event EventHandler<SortOptions>? SortChanged;
+    public event EventHandler<string>? StatusMessage;
 
     public PreviewPanel(ImageLoadService imageService, FileOperationService fileOpService)
     {
@@ -109,6 +111,7 @@ public partial class PreviewPanel : UserControl
 
     private void UpdateActionButton()
     {
+        bool noTarget = _context == PreviewContext.Source && string.IsNullOrEmpty(_targetRoot);
         btnAction.Text = _context switch
         {
             PreviewContext.Source  => "Copy to Target",
@@ -116,7 +119,8 @@ public partial class PreviewPanel : UserControl
             PreviewContext.Removed => "Undo",
             _                      => string.Empty
         };
-        btnAction.Enabled = _index >= 0 && !_operationInProgress;
+        btnAction.Enabled = _index >= 0 && !_operationInProgress && !noTarget;
+        _toolTip.SetToolTip(btnAction, noTarget ? "Select a target folder first" : string.Empty);
     }
 
     private async void OnActionClick(object? sender, EventArgs e)
@@ -158,6 +162,13 @@ public partial class PreviewPanel : UserControl
                 FileActioned?.Invoke(this, file);
                 UpdateActionButton();
                 await ShowCurrentAsync();
+            }
+            else
+            {
+                var skipMsg = _context == PreviewContext.Source
+                    ? "File already exists in target — skipped."
+                    : "File already exists in target — skipped.";
+                StatusMessage?.Invoke(this, skipMsg);
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -233,6 +244,7 @@ public partial class PreviewPanel : UserControl
         if (disposing)
         {
             _currentBitmap?.Dispose();
+            _toolTip.Dispose();
             components?.Dispose();
         }
         base.Dispose(disposing);

@@ -17,6 +17,19 @@ public partial class FolderTreePanel : UserControl
         InitializeComponent();
     }
 
+    public void ShowWarning(string message)
+    {
+        treeView.Visible = false;
+        lblWarning.Text = message;
+        lblWarning.Visible = true;
+    }
+
+    public void ClearWarning()
+    {
+        lblWarning.Visible = false;
+        treeView.Visible = true;
+    }
+
     public async Task LoadRootAsync(string path, string rootPath)
     {
         treeView.Nodes.Clear();

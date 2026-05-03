@@ -57,6 +57,7 @@ public partial class MainForm : Form
 
         _previewPanel.SortChanged += OnPreviewSortChanged;
         _previewPanel.FileActioned += OnFileActioned;
+        _previewPanel.StatusMessage += OnStatusMessage;
 
         btnSelectSource.Click += OnSelectSource;
         btnSelectTarget.Click += OnSelectTarget;
@@ -75,6 +76,8 @@ public partial class MainForm : Form
             lblSourcePath.Text = _settings.SourceFolderPath;
             if (Directory.Exists(_settings.SourceFolderPath))
                 await _sourceTree.LoadRootAsync(_settings.SourceFolderPath, _settings.SourceFolderPath);
+            else
+                _sourceTree.ShowWarning("Folder not found — please select again");
         }
 
         if (!string.IsNullOrEmpty(_settings.TargetFolderPath))
@@ -85,6 +88,8 @@ public partial class MainForm : Form
                 await _targetTree.LoadRootAsync(_settings.TargetFolderPath, _settings.TargetFolderPath);
                 await LoadRemovedTreeAsync(_settings.TargetFolderPath);
             }
+            else
+                _targetTree.ShowWarning("Folder not found — please select again");
         }
     }
 
@@ -96,6 +101,7 @@ public partial class MainForm : Form
         if (dlg.ShowDialog() != DialogResult.OK) return;
         _settings.SourceFolderPath = dlg.SelectedPath;
         lblSourcePath.Text = dlg.SelectedPath;
+        _sourceTree.ClearWarning();
         await _sourceTree.LoadRootAsync(dlg.SelectedPath, dlg.SelectedPath);
     }
 
@@ -105,6 +111,7 @@ public partial class MainForm : Form
         if (dlg.ShowDialog() != DialogResult.OK) return;
         _settings.TargetFolderPath = dlg.SelectedPath;
         lblTargetPath.Text = dlg.SelectedPath;
+        _targetTree.ClearWarning();
         await _targetTree.LoadRootAsync(dlg.SelectedPath, dlg.SelectedPath);
         await LoadRemovedTreeAsync(dlg.SelectedPath);
     }
@@ -185,6 +192,25 @@ public partial class MainForm : Form
         // Refresh removed tree after any operation that affects it
         if (!string.IsNullOrEmpty(_settings.TargetFolderPath))
             await LoadRemovedTreeAsync(_settings.TargetFolderPath);
+    }
+
+    // ── Status messages ───────────────────────────────────────────────────────
+
+    private CancellationTokenSource? _statusCts;
+
+    private async void OnStatusMessage(object? sender, string message)
+    {
+        _statusCts?.Cancel();
+        _statusCts = new CancellationTokenSource();
+        var token = _statusCts.Token;
+
+        statusLabel.Text = message;
+        try
+        {
+            await Task.Delay(3000, token);
+            statusLabel.Text = string.Empty;
+        }
+        catch (OperationCanceledException) { }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
