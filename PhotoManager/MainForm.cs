@@ -21,6 +21,7 @@ public partial class MainForm : Form
     // Tracks which folder panel last fired SelectedFolderChanged
     private string _activeFolderPath = string.Empty;
     private FolderTreePanel? _activeTree;
+    private bool _isLoading = true;
 
     public MainForm(AppSettings settings)
     {
@@ -30,6 +31,12 @@ public partial class MainForm : Form
         _imageService = new ImageLoadService();
 
         InitializeComponent();
+
+        // Restore window bounds before any layout occurs
+        if (_settings.WindowWidth > 0 && _settings.WindowHeight > 0)
+            Size = new Size(_settings.WindowWidth, _settings.WindowHeight);
+        if (_settings.WindowLeft >= 0 && _settings.WindowTop >= 0)
+            Location = new Point(_settings.WindowLeft, _settings.WindowTop);
 
         _sourceTree = new FolderTreePanel(_scanService);
         _targetTree = new FolderTreePanel(_scanService);
@@ -78,23 +85,15 @@ public partial class MainForm : Form
         Resize += OnFormResize;
         Move += OnFormMove;
         Load += OnLoad;
+        Shown += OnShown;
     }
 
     // ── Startup ───────────────────────────────────────────────────────────────
 
     private async void OnLoad(object? sender, EventArgs e)
     {
-        if (_settings.WindowLeft >= 0 && _settings.WindowTop >= 0)
-        {
-            Left = _settings.WindowLeft;
-            Top = _settings.WindowTop;
-        }
-        if (_settings.WindowWidth > 0) Width = _settings.WindowWidth;
-        if (_settings.WindowHeight > 0) Height = _settings.WindowHeight;
         if (Enum.TryParse<FormWindowState>(_settings.WindowState, out var ws) && ws != FormWindowState.Minimized)
             WindowState = ws;
-
-        splitContainer.SplitterDistance = _settings.SplitterPosition;
 
         if (_settings.NameColumnWidth > 0)
             _fileListPanel.SetNameColumnWidth(_settings.NameColumnWidth);
@@ -117,6 +116,14 @@ public partial class MainForm : Form
             else
                 _targetTree.ShowWarning("Folder not found — please select again");
         }
+
+        _isLoading = false;
+    }
+
+    private void OnShown(object? sender, EventArgs e)
+    {
+        if (_settings.SplitterPosition > 0)
+            BeginInvoke(() => splitContainer.SplitterDistance = _settings.SplitterPosition);
     }
 
     // ── Folder selection ─────────────────────────────────────────────────────
@@ -301,6 +308,7 @@ public partial class MainForm : Form
 
     private void SaveWindowBounds()
     {
+        if (_isLoading) return;
         _settings.WindowState = WindowState.ToString();
         if (WindowState == FormWindowState.Normal)
         {

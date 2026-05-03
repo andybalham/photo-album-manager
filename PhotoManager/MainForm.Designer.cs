@@ -126,7 +126,7 @@ partial class MainForm
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1100, 700);
         MinimumSize = new Size(900, 600);
-        StartPosition = FormStartPosition.CenterScreen;
+        StartPosition = FormStartPosition.Manual;
         Text = "Photo Album Manager";
         Icon = SystemIcons.Application;
         MainMenuStrip = menuStrip;
