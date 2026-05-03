@@ -9,4 +9,10 @@ public class AppSettings
     public SortField SortField { get; set; } = SortField.Name;
     public SortDirection SortDirection { get; set; } = SortDirection.Ascending;
     public int SplitterPosition { get; set; } = 280;
+    public int NameColumnWidth { get; set; } = 0;
+    public int WindowWidth { get; set; } = 1100;
+    public int WindowHeight { get; set; } = 700;
+    public int WindowLeft { get; set; } = -1;
+    public int WindowTop { get; set; } = -1;
+    public string WindowState { get; set; } = "Normal";
 }

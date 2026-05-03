@@ -538,7 +538,7 @@ Harden the application against real-world failure conditions.
 
 ---
 
-## Phase 10 — Polish and Final Wiring
+## Phase 10 — Polish and Final Wiring ✅ COMPLETE
 
 ### Goal
 Final UX polish, keyboard shortcuts, and release readiness.
@@ -578,6 +578,8 @@ Final UX polish, keyboard shortcuts, and release readiness.
    dotnet test
    ```
    All tests must pass.
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. Keyboard shortcuts via `ProcessCmdKey` (Left/Right navigate, C/R/U context-aware action, F2 toggles File List/Preview). Window size/position/state persisted to settings. Name column width persisted via `ColumnWidthChanged` event; auto-resize skipped when user has set width. MenuStrip with Help → About (shows .NET version). Application icon set via `SystemIcons.Application`. Code review: all `async void` are event handlers, no `Task.Factory.StartNew`, no TODOs.
 
 ### Final Manual Checklist
 - [ ] App launches cleanly with no console errors

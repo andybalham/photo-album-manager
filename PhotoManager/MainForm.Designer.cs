@@ -6,6 +6,9 @@ partial class MainForm
 {
     private System.ComponentModel.IContainer components = null;
 
+    private MenuStrip menuStrip;
+    private ToolStripMenuItem mnuHelp;
+    private ToolStripMenuItem mnuAbout;
     private SplitContainer splitContainer;
     private TabControl leftTabControl;
     internal TabPage tabSource;
@@ -43,6 +46,9 @@ partial class MainForm
     {
         components = new System.ComponentModel.Container();
 
+        menuStrip = new MenuStrip();
+        mnuHelp = new ToolStripMenuItem();
+        mnuAbout = new ToolStripMenuItem();
         splitContainer = new SplitContainer();
         leftTabControl = new TabControl();
         tabSource = new TabPage();
@@ -72,6 +78,13 @@ partial class MainForm
         leftTabControl.SuspendLayout();
         rightTabControl.SuspendLayout();
         SuspendLayout();
+
+        // menuStrip
+        mnuAbout.Text = "&About";
+        mnuAbout.Click += OnAboutClick;
+        mnuHelp.Text = "&Help";
+        mnuHelp.DropDownItems.Add(mnuAbout);
+        menuStrip.Items.Add(mnuHelp);
 
         // statusStrip
         statusStrip.Items.AddRange([statusLabel]);
@@ -132,7 +145,10 @@ partial class MainForm
         MinimumSize = new Size(900, 600);
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Photo Album Manager";
+        Icon = SystemIcons.Application;
+        MainMenuStrip = menuStrip;
         Controls.Add(splitContainer);
+        Controls.Add(menuStrip);
         Controls.Add(statusStrip);
 
         splitContainer.Panel1.ResumeLayout(false);

@@ -9,6 +9,7 @@ public partial class FileListPanel : UserControl
     private List<ImageFile> _files = [];
     private string _currentFolder = string.Empty;
     private string _currentRoot = string.Empty;
+    private int _savedNameColumnWidth = 0;
 
     public SortOptions CurrentSort { get; private set; } = SortOptions.Default;
 
@@ -99,9 +100,19 @@ public partial class FileListPanel : UserControl
     private void ResizeNameColumn()
     {
         if (listView.Columns.Count == 0) return;
+        if (_savedNameColumnWidth > 0) return;
         var used = listView.Columns[1].Width + listView.Columns[2].Width;
         var available = listView.ClientSize.Width - used - SystemInformation.VerticalScrollBarWidth;
         if (available > 50) listView.Columns[0].Width = available;
+    }
+
+    private void OnColumnWidthChanged(object? sender, ColumnWidthChangedEventArgs e)
+    {
+        if (e.ColumnIndex == 0)
+        {
+            _savedNameColumnWidth = listView.Columns[0].Width;
+            NameColumnWidthChanged?.Invoke(this, _savedNameColumnWidth);
+        }
     }
 
     private void OnSortNameClick(object? sender, EventArgs e)
@@ -133,4 +144,12 @@ public partial class FileListPanel : UserControl
     }
 
     public event EventHandler<SortOptions>? SortChanged;
+    public event EventHandler<int>? NameColumnWidthChanged;
+
+    public void SetNameColumnWidth(int width)
+    {
+        _savedNameColumnWidth = width;
+        if (listView.Columns.Count > 0 && width > 0)
+            listView.Columns[0].Width = width;
+    }
 }

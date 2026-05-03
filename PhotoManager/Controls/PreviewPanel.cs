@@ -24,6 +24,12 @@ public partial class PreviewPanel : UserControl
     public event EventHandler<SortOptions>? SortChanged;
     public event EventHandler<string>? StatusMessage;
 
+    public PreviewContext Context => _context;
+    public bool CanAction => btnAction.Enabled;
+    public void NavigatePrev() => OnPrevClick(null, EventArgs.Empty);
+    public void NavigateNext() => OnNextClick(null, EventArgs.Empty);
+    public void TriggerAction() => _ = OnActionClickAsync();
+
     public PreviewPanel(ImageLoadService imageService, FileOperationService fileOpService)
     {
         _imageService = imageService;
@@ -123,7 +129,9 @@ public partial class PreviewPanel : UserControl
         _toolTip.SetToolTip(btnAction, noTarget ? "Select a target folder first" : string.Empty);
     }
 
-    private async void OnActionClick(object? sender, EventArgs e)
+    private void OnActionClick(object? sender, EventArgs e) => _ = OnActionClickAsync();
+
+    private async Task OnActionClickAsync()
     {
         if (_index < 0 || _index >= _files.Count || _operationInProgress) return;
 

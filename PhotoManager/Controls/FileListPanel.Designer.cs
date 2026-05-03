@@ -53,6 +53,7 @@ partial class FileListPanel
         ]);
         listView.Click += OnListViewClick;
         listView.DoubleClick += OnListViewDoubleClick;
+        listView.ColumnWidthChanged += OnColumnWidthChanged;
 
         // FileListPanel
         Controls.Add(listView);

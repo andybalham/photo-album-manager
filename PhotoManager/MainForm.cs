@@ -54,6 +54,7 @@ public partial class MainForm : Form
         _fileListPanel.SortChanged += OnSortChanged;
         _fileListPanel.FileSelected += OnFileSelected;
         _fileListPanel.FileDoubleClicked += OnFileDoubleClicked;
+        _fileListPanel.NameColumnWidthChanged += (_, w) => _settings.NameColumnWidth = w;
 
         _previewPanel.SortChanged += OnPreviewSortChanged;
         _previewPanel.FileActioned += OnFileActioned;
@@ -62,6 +63,8 @@ public partial class MainForm : Form
         btnSelectSource.Click += OnSelectSource;
         btnSelectTarget.Click += OnSelectTarget;
         splitContainer.SplitterMoved += OnSplitterMoved;
+        Resize += OnFormResize;
+        Move += OnFormMove;
         Load += OnLoad;
     }
 
@@ -69,7 +72,20 @@ public partial class MainForm : Form
 
     private async void OnLoad(object? sender, EventArgs e)
     {
+        if (_settings.WindowLeft >= 0 && _settings.WindowTop >= 0)
+        {
+            Left = _settings.WindowLeft;
+            Top = _settings.WindowTop;
+        }
+        if (_settings.WindowWidth > 0) Width = _settings.WindowWidth;
+        if (_settings.WindowHeight > 0) Height = _settings.WindowHeight;
+        if (Enum.TryParse<FormWindowState>(_settings.WindowState, out var ws) && ws != FormWindowState.Minimized)
+            WindowState = ws;
+
         splitContainer.SplitterDistance = _settings.SplitterPosition;
+
+        if (_settings.NameColumnWidth > 0)
+            _fileListPanel.SetNameColumnWidth(_settings.NameColumnWidth);
 
         if (!string.IsNullOrEmpty(_settings.SourceFolderPath))
         {
@@ -192,6 +208,62 @@ public partial class MainForm : Form
         // Refresh removed tree after any operation that affects it
         if (!string.IsNullOrEmpty(_settings.TargetFolderPath))
             await LoadRemovedTreeAsync(_settings.TargetFolderPath);
+    }
+
+    // ── Window persistence ────────────────────────────────────────────────────
+
+    private void OnFormResize(object? sender, EventArgs e) => SaveWindowBounds();
+    private void OnFormMove(object? sender, EventArgs e) => SaveWindowBounds();
+
+    private void SaveWindowBounds()
+    {
+        _settings.WindowState = WindowState.ToString();
+        if (WindowState == FormWindowState.Normal)
+        {
+            _settings.WindowWidth = Width;
+            _settings.WindowHeight = Height;
+            _settings.WindowLeft = Left;
+            _settings.WindowTop = Top;
+        }
+    }
+
+    // ── Keyboard shortcuts ────────────────────────────────────────────────────
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (rightTabControl.SelectedTab == tabPreview)
+        {
+            switch (keyData)
+            {
+                case Keys.Left:  _previewPanel.NavigatePrev(); return true;
+                case Keys.Right: _previewPanel.NavigateNext(); return true;
+                case Keys.C when _previewPanel.Context == PreviewContext.Source && _previewPanel.CanAction:
+                    _previewPanel.TriggerAction(); return true;
+                case Keys.R when _previewPanel.Context == PreviewContext.Target && _previewPanel.CanAction:
+                    _previewPanel.TriggerAction(); return true;
+                case Keys.U when _previewPanel.Context == PreviewContext.Removed && _previewPanel.CanAction:
+                    _previewPanel.TriggerAction(); return true;
+            }
+        }
+        if (keyData == Keys.F2)
+        {
+            rightTabControl.SelectedTab =
+                rightTabControl.SelectedTab == tabFileList ? tabPreview : tabFileList;
+            return true;
+        }
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    // ── About ─────────────────────────────────────────────────────────────────
+
+    private void OnAboutClick(object? sender, EventArgs e)
+    {
+        var version = Environment.Version;
+        MessageBox.Show(
+            $"Photo Album Manager\n\n.NET {version}",
+            "About",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
     }
 
     // ── Status messages ───────────────────────────────────────────────────────
