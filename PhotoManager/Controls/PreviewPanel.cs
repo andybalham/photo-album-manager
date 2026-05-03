@@ -146,7 +146,14 @@ public partial class PreviewPanel : UserControl
             switch (_context)
             {
                 case PreviewContext.Source:
-                    acted = await _fileOpService.CopyToTargetAsync(file, _sourceRoot, _targetRoot);
+                    var removedPath = Path.Combine(_targetRoot, "_removed", file.RelativePath);
+                    if (File.Exists(removedPath))
+                    {
+                        var removedFile = file with { FullPath = removedPath };
+                        acted = await _fileOpService.UndoRemoveAsync(removedFile, _targetRoot);
+                    }
+                    else
+                        acted = await _fileOpService.CopyToTargetAsync(file, _sourceRoot, _targetRoot);
                     break;
                 case PreviewContext.Target:
                     await _fileOpService.MoveToRemovedAsync(file, _targetRoot);
