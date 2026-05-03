@@ -141,7 +141,7 @@ Both must pass with zero errors and zero test failures. The app must launch and 
 
 ---
 
-## Phase 2 — Settings Service
+## Phase 2 — Settings Service ✅ COMPLETE
 
 ### Goal
 Implement persistence of user settings to `%APPDATA%\PhotoManager\appsettings.json`. No UI yet.
@@ -176,11 +176,13 @@ Implement persistence of user settings to `%APPDATA%\PhotoManager\appsettings.js
    - `Save()` then `Load()` round-trips all fields correctly
    - `Load()` handles a corrupt/invalid JSON file gracefully (returns defaults)
 
-### Checkpoint
+### Checkpoint ✅
 ```
 dotnet test
 ```
 All settings tests must pass. Manually run the app, close it, and verify `%APPDATA%\PhotoManager\appsettings.json` is created.
+
+**Result:** 4/4 tests passed. `SettingsService` accepts optional directory arg for test isolation. `Program.cs` wires save on `FormClosed`.
 
 ---
 

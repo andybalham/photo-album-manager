@@ -21,7 +21,7 @@ PhotoManager/
 │   ├── Program.cs
 │   ├── Models/                ImageFile.cs, SortOptions.cs  ✅
 │   ├── Helpers/               ImageFormatHelper.cs  ✅
-│   ├── Settings/              AppSettings.cs, SettingsService.cs  (Phase 2)
+│   ├── Settings/              AppSettings.cs, SettingsService.cs  ✅
 │   ├── Services/              FolderScanService, FileOperationService, ImageLoadService  (Phases 3-4, 8)
 │   └── Controls/              FolderTreePanel, FileListPanel, PreviewPanel  (Phases 6-8)
 └── PhotoManager.Tests/        (xUnit, net10.0-windows)
@@ -59,7 +59,7 @@ Work through `docs/implementation-plan.md` in order. Each phase has a checkpoint
 | Phase | Goal |
 |---|---|
 | 1 | Solution scaffold, models, helpers ✅ |
-| 2 | Settings service |
+| 2 | Settings service ✅ |
 | 3 | FolderScanService |
 | 4 | FileOperationService |
 | 5 | MainForm layout and splitter |

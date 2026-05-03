@@ -1,3 +1,5 @@
+using PhotoManager.Settings;
+
 namespace PhotoManager;
 
 static class Program
@@ -6,6 +8,13 @@ static class Program
     static void Main()
     {
         ApplicationConfiguration.Initialize();
-        Application.Run(new MainForm());
+
+        var settingsService = new SettingsService();
+        var settings = settingsService.Load();
+
+        var form = new MainForm(settings);
+        form.FormClosed += (_, _) => settingsService.Save(settings);
+
+        Application.Run(form);
     }
 }
