@@ -232,6 +232,13 @@ public partial class PreviewPanel : UserControl
         }
     }
 
+    public void Clear()
+    {
+        _files = [];
+        _index = -1;
+        ShowBlank();
+    }
+
     private void ShowBlank()
     {
         lblFileInfo.Text = string.Empty;

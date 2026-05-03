@@ -57,6 +57,14 @@ public partial class FileListPanel : UserControl
         PopulateList();
     }
 
+    public void SelectFirst()
+    {
+        if (listView.Items.Count == 0) return;
+        listView.Items[0].Selected = true;
+        listView.Items[0].Focused = true;
+        listView.EnsureVisible(0);
+    }
+
     public void ClearFiles()
     {
         _files = [];

@@ -155,9 +155,20 @@ public partial class MainForm : Form
         _activeFolderPath = folderPath;
         _activeTree = sender as FolderTreePanel;
 
-        var (_, sourceRoot, targetRoot) = GetContext();
+        var (_, sourceRoot, _) = GetContext();
         var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
         await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort);
+
+        rightTabControl.SelectedTab = tabFileList;
+
+        var files = _fileListPanel.GetCurrentFiles().ToList();
+        if (files.Count > 0)
+        {
+            _fileListPanel.SelectFirst();
+            await OpenPreviewAsync(files[0]);
+        }
+        else
+            _previewPanel.Clear();
 
         var count = await _scanService.GetImageCountAsync(folderPath);
         statusLabel.Text = $"{count} image(s)";
@@ -175,19 +186,27 @@ public partial class MainForm : Form
         if (string.IsNullOrEmpty(folderPath))
         {
             _fileListPanel.ClearFiles();
+            _previewPanel.Clear();
             return;
         }
 
         _activeFolderPath = folderPath;
         _activeTree = tree;
 
-        var (_, sourceRoot, targetRoot) = GetContext();
+        var (_, sourceRoot, _) = GetContext();
         var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
         await _fileListPanel.LoadFolderAsync(folderPath, sourceRoot, sort);
 
+        rightTabControl.SelectedTab = tabFileList;
+
         var files = _fileListPanel.GetCurrentFiles().ToList();
         if (files.Count > 0)
+        {
+            _fileListPanel.SelectFirst();
             await OpenPreviewAsync(files[0]);
+        }
+        else
+            _previewPanel.Clear();
     }
 
     // ── File list → preview ───────────────────────────────────────────────────
