@@ -74,7 +74,7 @@ public partial class FileListPanel : UserControl
     private void PopulateList()
     {
         IEnumerable<ImageFile> sorted = CurrentSort.Field == SortField.DateCreated
-            ? _files.OrderBy(f => f.DateCreated)
+            ? _files.OrderBy(f => f.DateModified)
             : _files.OrderBy(f => f.FileName, StringComparer.OrdinalIgnoreCase);
 
         if (CurrentSort.Direction == SortDirection.Descending)

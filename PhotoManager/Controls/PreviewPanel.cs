@@ -97,7 +97,7 @@ public partial class PreviewPanel : UserControl
     private void ApplySort()
     {
         IEnumerable<ImageFile> sorted = _sort.Field == SortField.DateCreated
-            ? _files.OrderBy(f => f.DateCreated)
+            ? _files.OrderBy(f => f.DateModified)
             : _files.OrderBy(f => f.FileName, StringComparer.OrdinalIgnoreCase);
         if (_sort.Direction == SortDirection.Descending)
             sorted = sorted.Reverse();

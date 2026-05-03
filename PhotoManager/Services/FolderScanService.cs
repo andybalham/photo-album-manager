@@ -18,7 +18,7 @@ public class FolderScanService
                 {
                     var info = new FileInfo(path);
                     var relative = Path.GetRelativePath(rootPath, path);
-                    return new ImageFile(path, relative, info.Name, info.CreationTime, info.Length);
+                    return new ImageFile(path, relative, info.Name, info.LastWriteTime, info.Length);
                 })
                 .ToList();
         });
