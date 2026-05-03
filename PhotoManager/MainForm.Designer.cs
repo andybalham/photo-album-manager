@@ -26,7 +26,6 @@ partial class MainForm
     private Button btnSelectTarget;
 
     // Removed tab header
-    private Label lblRemovedDerived;
 
     // Right pane placeholders (replaced in later phases)
     internal Label lblFileListPlaceholder;
@@ -59,8 +58,6 @@ partial class MainForm
 
         btnSelectSource = new Button();
         btnSelectTarget = new Button();
-
-        lblRemovedDerived = new Label();
 
         lblFileListPlaceholder = new Label();
         lblPreviewPlaceholder = new Label();
@@ -105,12 +102,6 @@ partial class MainForm
         // --- Removed tab ---
         tabRemoved.Text = "Removed";
         tabRemoved.Padding = new Padding(4);
-        lblRemovedDerived.Text = "Derived from Target folder";
-        lblRemovedDerived.Dock = DockStyle.Top;
-        lblRemovedDerived.Height = 24;
-        lblRemovedDerived.ForeColor = SystemColors.GrayText;
-        tabRemoved.Controls.Add(lblRemovedDerived);
-
         // rightTabControl
         rightTabControl.Dock = DockStyle.Fill;
         rightTabControl.TabPages.AddRange([tabFileList, tabPreview]);

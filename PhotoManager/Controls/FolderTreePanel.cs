@@ -61,9 +61,11 @@ public partial class FolderTreePanel : UserControl
         if (count > 0) return;
 
         var parent = node.Parent;
+        if (parent == null) return; // never remove root node
+
         node.Remove();
 
-        if (parent?.Tag is string parentPath)
+        if (parent.Tag is string parentPath)
             await RefreshNodeAsync(parentPath);
     }
 

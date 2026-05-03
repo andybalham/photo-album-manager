@@ -44,12 +44,12 @@ public partial class MainForm : Form
 
         var targetTreePanel = new Panel { Dock = DockStyle.Fill };
         targetTreePanel.Controls.Add(_targetTree);
-        tabSource.Controls.Add(targetTreePanel);
+        tabTarget.Controls.Add(targetTreePanel);
         BuildFolderTabHeader(tabTarget, btnSelectTarget);
 
         var removedTreePanel = new Panel { Dock = DockStyle.Fill };
         removedTreePanel.Controls.Add(_removedTree);
-        tabSource.Controls.Add(removedTreePanel);
+        tabRemoved.Controls.Add(removedTreePanel);
 
         tabFileList.Controls.Remove(lblFileListPlaceholder);
         tabFileList.Controls.Add(_fileListPanel);
