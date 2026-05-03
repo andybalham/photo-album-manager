@@ -37,9 +37,19 @@ public partial class MainForm : Form
         _fileListPanel = new FileListPanel(_scanService);
         _previewPanel = new PreviewPanel(_imageService, _fileOpService);
 
-        tabSource.Controls.Add(_sourceTree);
-        tabTarget.Controls.Add(_targetTree);
-        tabRemoved.Controls.Add(_removedTree);
+        var sourceTreePanel = new Panel { Dock = DockStyle.Fill };
+        sourceTreePanel.Controls.Add(_sourceTree);
+        tabSource.Controls.Add(sourceTreePanel);
+        BuildFolderTabHeader(tabSource, btnSelectSource);
+
+        var targetTreePanel = new Panel { Dock = DockStyle.Fill };
+        targetTreePanel.Controls.Add(_targetTree);
+        tabSource.Controls.Add(targetTreePanel);
+        BuildFolderTabHeader(tabTarget, btnSelectTarget);
+
+        var removedTreePanel = new Panel { Dock = DockStyle.Fill };
+        removedTreePanel.Controls.Add(_removedTree);
+        tabSource.Controls.Add(removedTreePanel);
 
         tabFileList.Controls.Remove(lblFileListPlaceholder);
         tabFileList.Controls.Add(_fileListPanel);
@@ -89,7 +99,6 @@ public partial class MainForm : Form
 
         if (!string.IsNullOrEmpty(_settings.SourceFolderPath))
         {
-            lblSourcePath.Text = _settings.SourceFolderPath;
             if (Directory.Exists(_settings.SourceFolderPath))
                 await _sourceTree.LoadRootAsync(_settings.SourceFolderPath, _settings.SourceFolderPath);
             else
@@ -98,7 +107,6 @@ public partial class MainForm : Form
 
         if (!string.IsNullOrEmpty(_settings.TargetFolderPath))
         {
-            lblTargetPath.Text = _settings.TargetFolderPath;
             if (Directory.Exists(_settings.TargetFolderPath))
             {
                 await _targetTree.LoadRootAsync(_settings.TargetFolderPath, _settings.TargetFolderPath);
@@ -116,7 +124,6 @@ public partial class MainForm : Form
         using var dlg = new FolderBrowserDialog();
         if (dlg.ShowDialog() != DialogResult.OK) return;
         _settings.SourceFolderPath = dlg.SelectedPath;
-        lblSourcePath.Text = dlg.SelectedPath;
         _sourceTree.ClearWarning();
         await _sourceTree.LoadRootAsync(dlg.SelectedPath, dlg.SelectedPath);
     }
@@ -126,7 +133,6 @@ public partial class MainForm : Form
         using var dlg = new FolderBrowserDialog();
         if (dlg.ShowDialog() != DialogResult.OK) return;
         _settings.TargetFolderPath = dlg.SelectedPath;
-        lblTargetPath.Text = dlg.SelectedPath;
         _targetTree.ClearWarning();
         await _targetTree.LoadRootAsync(dlg.SelectedPath, dlg.SelectedPath);
         await LoadRemovedTreeAsync(dlg.SelectedPath);

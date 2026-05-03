@@ -35,13 +35,19 @@ public partial class FolderTreePanel : UserControl
         treeView.Nodes.Clear();
         if (!Directory.Exists(path)) return;
 
-        var node = MakeNode(path);
-        treeView.BeginUpdate();
-        treeView.Nodes.Add(node);
-        treeView.EndUpdate();
+        var subfolders = await _scanService.GetImageSubfoldersAsync(path);
 
-        await ExpandNodeAsync(node);
-        node.Expand();
+        var root = new TreeNode(path) { Tag = path };
+        foreach (var sub in subfolders)
+            root.Nodes.Add(MakeNode(sub));
+        root.Expand();
+
+        treeView.BeginUpdate();
+        treeView.Nodes.Clear();
+        treeView.Nodes.Add(root);
+        treeView.EndUpdate();
+        root.EnsureVisible();
+
     }
 
     public void RemoveFileNode(string folderPath) => _ = RefreshNodeAsync(folderPath);

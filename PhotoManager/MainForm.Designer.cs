@@ -22,11 +22,8 @@ partial class MainForm
 
     // Source tab header controls
     private Button btnSelectSource;
-    internal Label lblSourcePath;
-
     // Target tab header controls
     private Button btnSelectTarget;
-    internal Label lblTargetPath;
 
     // Removed tab header
     private Label lblRemovedDerived;
@@ -61,10 +58,7 @@ partial class MainForm
         statusLabel = new ToolStripStatusLabel();
 
         btnSelectSource = new Button();
-        lblSourcePath = new Label();
-
         btnSelectTarget = new Button();
-        lblTargetPath = new Label();
 
         lblRemovedDerived = new Label();
 
@@ -103,12 +97,10 @@ partial class MainForm
         // --- Source tab ---
         tabSource.Text = "Source";
         tabSource.Padding = new Padding(4);
-        BuildFolderTabHeader(tabSource, btnSelectSource, lblSourcePath);
 
         // --- Target tab ---
         tabTarget.Text = "Target";
         tabTarget.Padding = new Padding(4);
-        BuildFolderTabHeader(tabTarget, btnSelectTarget, lblTargetPath);
 
         // --- Removed tab ---
         tabRemoved.Text = "Removed";
@@ -161,19 +153,14 @@ partial class MainForm
         PerformLayout();
     }
 
-    private static void BuildFolderTabHeader(TabPage tab, Button btnSelect, Label lblPath)
+    private static void BuildFolderTabHeader(TabPage tab, Button btnSelect)
     {
         btnSelect.Text = "Select Folder…";
         btnSelect.Dock = DockStyle.Top;
         btnSelect.Height = 30;
 
-        lblPath.Dock = DockStyle.Top;
-        lblPath.Height = 20;
-        lblPath.ForeColor = SystemColors.GrayText;
-        lblPath.Font = new Font(SystemFonts.DefaultFont.FontFamily, 8f);
-
-        // Controls added last appear on top with DockStyle.Top
-        tab.Controls.Add(lblPath);
-        tab.Controls.Add(btnSelect);
+        var header = new Panel { Dock = DockStyle.Top, Height = 30 };
+        header.Controls.Add(btnSelect);
+        tab.Controls.Add(header);
     }
 }
