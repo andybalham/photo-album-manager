@@ -21,6 +21,7 @@ public partial class PreviewPanel : UserControl
     private bool _operationInProgress;
 
     public event EventHandler<ImageFile>? FileActioned;
+    public event EventHandler<ImageFile>? FileChanged;
     public event EventHandler<SortOptions>? SortChanged;
     public event EventHandler<string>? StatusMessage;
 
@@ -201,6 +202,7 @@ public partial class PreviewPanel : UserControl
         }
 
         var file = _files[_index];
+        FileChanged?.Invoke(this, file);
         lblFileInfo.Text = $"{file.FileName}  —  {file.FormattedDate}";
         UpdatePosition();
         btnPrev.Enabled = _files.Count > 1;

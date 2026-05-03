@@ -68,6 +68,7 @@ public partial class MainForm : Form
 
         _previewPanel.SortChanged += OnPreviewSortChanged;
         _previewPanel.FileActioned += OnFileActioned;
+        _previewPanel.FileChanged += OnPreviewFileChanged;
         _previewPanel.StatusMessage += OnStatusMessage;
 
         btnSelectSource.Click += OnSelectSource;
@@ -213,14 +214,24 @@ public partial class MainForm : Form
 
     private void OnFileSelected(object? sender, ImageFile file)
     {
-        if (rightTabControl.SelectedTab == tabPreview)
-            _ = OpenPreviewAsync(file);
+        if (_syncingSelection) return;
+        _ = OpenPreviewAsync(file);
     }
 
     private void OnFileDoubleClicked(object? sender, ImageFile file)
     {
         rightTabControl.SelectedTab = tabPreview;
         _ = OpenPreviewAsync(file);
+    }
+
+    private bool _syncingSelection;
+
+    private void OnPreviewFileChanged(object? sender, ImageFile file)
+    {
+        if (_syncingSelection) return;
+        _syncingSelection = true;
+        _fileListPanel.SelectFile(file);
+        _syncingSelection = false;
     }
 
     private async Task OpenPreviewAsync(ImageFile selectedFile)

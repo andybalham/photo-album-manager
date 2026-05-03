@@ -65,6 +65,21 @@ public partial class FileListPanel : UserControl
         listView.EnsureVisible(0);
     }
 
+    public void SelectFile(ImageFile file)
+    {
+        foreach (ListViewItem item in listView.Items)
+        {
+            if (item.Tag is ImageFile f && f.FullPath == file.FullPath)
+            {
+                listView.SelectedItems.Clear();
+                item.Selected = true;
+                item.Focused = true;
+                listView.EnsureVisible(item.Index);
+                return;
+            }
+        }
+    }
+
     public void ClearFiles()
     {
         _files = [];
