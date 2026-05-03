@@ -342,7 +342,19 @@ public partial class MainForm : Form
     {
         var version = Environment.Version;
         MessageBox.Show(
-            $"Photo Album Manager\n\n.NET {version}",
+            $"""
+            Photo Album Manager  ·  .NET {version}
+
+            Keyboard Shortcuts
+            ──────────────────
+            F2              Toggle File List / Preview
+
+            In Preview:
+              ←  /  →       Previous / Next image
+              C             Copy to Target  (Source tab)
+              R             Remove          (Target tab)
+              U             Undo remove     (Removed tab)
+            """,
             "About",
             MessageBoxButtons.OK,
             MessageBoxIcon.Information);
