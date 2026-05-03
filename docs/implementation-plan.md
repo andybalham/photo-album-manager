@@ -379,7 +379,7 @@ Implement `FolderTreePanel` — a reusable user control containing the full recu
 
 ---
 
-## Phase 7 — File List Panel (Right Pane)
+## Phase 7 — File List Panel (Right Pane) ✅ COMPLETE
 
 ### Goal
 Implement `FileListPanel` — a user control showing the image files in the selected folder as a sortable list.
@@ -411,13 +411,15 @@ Implement `FileListPanel` — a user control showing the image files in the sele
 
 7. Persist sort changes to the in-memory settings object (saved on close).
 
-### Checkpoint
+### Checkpoint ✅
 - `dotnet build` passes
 - Launch the app, select a folder in the Source tree, and verify:
   - Images appear in the file list with correct Name, Date, and Size values
   - Sorting by Name and Date works correctly in both directions
   - Switching folders updates the list
   - Switching left-pane tabs updates the list to reflect the selected folder on that tab
+
+**Result:** Build 0 errors/0 warnings. 18/18 tests pass. `FileListPanel.SortChanged` event propagates to `MainForm` which persists to settings. `RemoveFile(ImageFile)` exposed for Phase 8. Active tab context determined from sender reference in `OnFolderSelected`.
 
 ---
 

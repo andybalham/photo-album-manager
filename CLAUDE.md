@@ -23,7 +23,7 @@ PhotoManager/
 │   ├── Helpers/               ImageFormatHelper.cs  ✅
 │   ├── Settings/              AppSettings.cs, SettingsService.cs  ✅
 │   ├── Services/              FolderScanService.cs ✅, FileOperationService.cs ✅, ImageLoadService  (Phase 8)
-│   └── Controls/              FolderTreePanel.cs ✅, FileListPanel, PreviewPanel  (Phases 7-8)
+│   └── Controls/              FolderTreePanel.cs ✅, FileListPanel.cs ✅, PreviewPanel  (Phase 8)
 └── PhotoManager.Tests/        (xUnit, net10.0-windows)
 ```
 
@@ -64,7 +64,7 @@ Work through `docs/implementation-plan.md` in order. Each phase has a checkpoint
 | 4 | FileOperationService ✅ |
 | 5 | MainForm layout and splitter ✅ |
 | 6 | FolderTreePanel ✅ |
-| 7 | FileListPanel |
+| 7 | FileListPanel ✅ |
 | 8 | PreviewPanel + ImageLoadService |
 | 9 | Error handling and edge cases |
 | 10 | Polish, keyboard shortcuts, window persistence |
