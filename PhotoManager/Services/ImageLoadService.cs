@@ -9,6 +9,7 @@ public class ImageLoadService
             try
             {
                 using var src = Image.FromFile(path);
+                ApplyExifOrientation(src);
                 var target = ScaleToFit(src.Size, displaySize);
                 var bmp = new Bitmap(target.Width, target.Height);
                 using var g = Graphics.FromImage(bmp);
@@ -28,6 +29,26 @@ public class ImageLoadService
                 return (null, "Cannot preview this image");
             }
         });
+    }
+
+    private static void ApplyExifOrientation(Image img)
+    {
+        const int orientationId = 0x0112;
+        if (!img.PropertyIdList.Contains(orientationId)) return;
+        var orientation = (int)img.GetPropertyItem(orientationId)!.Value![0];
+        var rotation = orientation switch
+        {
+            2 => RotateFlipType.RotateNoneFlipX,
+            3 => RotateFlipType.Rotate180FlipNone,
+            4 => RotateFlipType.Rotate180FlipX,
+            5 => RotateFlipType.Rotate90FlipX,
+            6 => RotateFlipType.Rotate90FlipNone,
+            7 => RotateFlipType.Rotate270FlipX,
+            8 => RotateFlipType.Rotate270FlipNone,
+            _ => RotateFlipType.RotateNoneFlipNone
+        };
+        if (rotation != RotateFlipType.RotateNoneFlipNone)
+            img.RotateFlip(rotation);
     }
 
     private static Size ScaleToFit(Size source, Size display)
