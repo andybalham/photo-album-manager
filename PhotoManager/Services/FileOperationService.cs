@@ -1,19 +1,36 @@
+using PhotoManager.Helpers;
 using PhotoManager.Models;
 
 namespace PhotoManager.Services;
 
+public enum CopyResult { Success, ConflictInTarget, ConflictInRemoved }
+
 public class FileOperationService
 {
-    public Task<bool> CopyToTargetAsync(ImageFile file, string sourceRoot, string targetRoot) =>
+    public Task<CopyResult> CopyToTargetAsync(ImageFile file, string targetRoot) =>
         Task.Run(() =>
         {
-            var destPath = Path.Combine(targetRoot, file.RelativePath);
+            var destPath = Path.Combine(targetRoot, file.FileName);
             if (File.Exists(destPath))
-                return false;
+                return CopyResult.ConflictInTarget;
+
+            var removedPath = Path.Combine(targetRoot, "_removed", file.FileName);
+            if (File.Exists(removedPath))
+            {
+                var removedInfo = new FileInfo(removedPath);
+                if (ImageFormatHelper.GetFileDate(removedPath) == ImageFormatHelper.GetFileDate(file.FullPath)
+                    && removedInfo.Length == file.FileSizeBytes)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
+                    File.Move(removedPath, destPath);
+                    return CopyResult.Success;
+                }
+                return CopyResult.ConflictInRemoved;
+            }
 
             Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
             File.Copy(file.FullPath, destPath);
-            return true;
+            return CopyResult.Success;
         });
 
     public Task MoveToRemovedAsync(ImageFile file, string targetRoot) =>

@@ -146,14 +146,23 @@ public partial class PreviewPanel : UserControl
             switch (_context)
             {
                 case PreviewContext.Source:
-                    var removedPath = Path.Combine(_targetRoot, "_removed", file.RelativePath);
-                    if (File.Exists(removedPath))
+                    var copyResult = await _fileOpService.CopyToTargetAsync(file, _targetRoot);
+                    if (copyResult == CopyResult.ConflictInTarget)
                     {
-                        var removedFile = file with { FullPath = removedPath };
-                        acted = await _fileOpService.UndoRemoveAsync(removedFile, _targetRoot);
+                        MessageBox.Show(
+                            $"A file named '{file.FileName}' already exists in the target folder — copy skipped.",
+                            "File Exists", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        acted = false;
+                    }
+                    else if (copyResult == CopyResult.ConflictInRemoved)
+                    {
+                        MessageBox.Show(
+                            $"A file named '{file.FileName}' already exists in the removed folder — copy skipped.",
+                            "File Exists", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        acted = false;
                     }
                     else
-                        acted = await _fileOpService.CopyToTargetAsync(file, _sourceRoot, _targetRoot);
+                        acted = true;
                     break;
                 case PreviewContext.Target:
                     await _fileOpService.MoveToRemovedAsync(file, _targetRoot);
@@ -179,12 +188,9 @@ public partial class PreviewPanel : UserControl
                 UpdateActionButton();
                 await ShowCurrentAsync();
             }
-            else
+            else if (_context != PreviewContext.Source)
             {
-                var skipMsg = _context == PreviewContext.Source
-                    ? "File already exists in target — skipped."
-                    : "File already exists in target — skipped.";
-                StatusMessage?.Invoke(this, skipMsg);
+                StatusMessage?.Invoke(this, "File already exists in target — skipped.");
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
