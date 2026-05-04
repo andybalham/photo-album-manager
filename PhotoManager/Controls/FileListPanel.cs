@@ -10,6 +10,8 @@ public partial class FileListPanel : UserControl
     private string _currentFolder = string.Empty;
     private string _currentRoot = string.Empty;
     private int _savedNameColumnWidth = 0;
+    private CancellationTokenSource? _loadCts;
+    private int _loadGeneration = 0;
 
     public SortOptions CurrentSort { get; private set; } = SortOptions.Default;
 
@@ -31,11 +33,53 @@ public partial class FileListPanel : UserControl
     public async Task LoadFolderAsync(string folderPath, string rootPath, SortOptions sort,
         IReadOnlyList<string>? excludeRoots = null)
     {
+        _loadCts?.Cancel();
+        _loadCts = new CancellationTokenSource();
+        var ct = _loadCts.Token;
+        var generation = ++_loadGeneration;
+
         _currentFolder = folderPath;
         _currentRoot = rootPath;
         CurrentSort = sort;
+        _files = [];
+        listView.Items.Clear();
 
-        _files = [.. (await _scanService.GetFilesInFolderAsync(folderPath, rootPath, excludeRoots))];
+        listView.Enabled = false;
+        Cursor = Cursors.WaitCursor;
+        lblStatus.Text = "Loading...";
+        lblStatus.Visible = true;
+        progressBar.Visible = true;
+
+        var collected = new List<ImageFile>();
+        try
+        {
+            int count = 0;
+            await foreach (var file in _scanService.StreamFilesInFolderAsync(folderPath, rootPath, excludeRoots, ct))
+            {
+                collected.Add(file);
+                count++;
+                if (count % 10 == 0)
+                    lblStatus.Text = $"Loading... ({count})";
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            if (generation == _loadGeneration)
+            {
+                listView.Enabled = true;
+                Cursor = Cursors.Default;
+                progressBar.Visible = false;
+                lblStatus.Visible = false;
+            }
+        }
+
+        if (generation != _loadGeneration) return;
+
+        _files = collected;
         PopulateList();
         UpdateSortButtons();
     }

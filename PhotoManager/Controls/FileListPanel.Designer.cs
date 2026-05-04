@@ -6,6 +6,8 @@ partial class FileListPanel
     internal ToolStrip toolStrip;
     internal ToolStripButton btnSortName;
     internal ToolStripButton btnSortDate;
+    internal ToolStripLabel lblStatus;
+    internal ToolStripProgressBar progressBar;
     internal ListView listView;
 
     protected override void Dispose(bool disposing)
@@ -21,13 +23,16 @@ partial class FileListPanel
         toolStrip = new ToolStrip();
         btnSortName = new ToolStripButton();
         btnSortDate = new ToolStripButton();
+        lblStatus = new ToolStripLabel();
+        progressBar = new ToolStripProgressBar();
         listView = new ListView();
 
         toolStrip.SuspendLayout();
         SuspendLayout();
 
         // toolStrip
-        toolStrip.Items.AddRange([btnSortName, btnSortDate]);
+        toolStrip.Items.AddRange([btnSortName, btnSortDate,
+            new ToolStripSeparator(), lblStatus, progressBar]);
         toolStrip.GripStyle = ToolStripGripStyle.Hidden;
 
         // btnSortName
@@ -39,6 +44,16 @@ partial class FileListPanel
         btnSortDate.Text = "Sort by Date";
         btnSortDate.CheckOnClick = false;
         btnSortDate.Click += OnSortDateClick;
+
+        // lblStatus
+        lblStatus.Text = string.Empty;
+        lblStatus.Visible = false;
+
+        // progressBar
+        progressBar.Style = ProgressBarStyle.Marquee;
+        progressBar.MarqueeAnimationSpeed = 30;
+        progressBar.Width = 100;
+        progressBar.Visible = false;
 
         // listView
         listView.View = View.Details;

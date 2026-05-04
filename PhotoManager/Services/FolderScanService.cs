@@ -1,6 +1,8 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Channels;
 using PhotoManager.Helpers;
 using PhotoManager.Models;
 
@@ -29,6 +31,42 @@ public class FolderScanService
                     root => File.Exists(Path.Combine(root, f.RelativePath))))
                 .ToList();
         });
+
+    public async IAsyncEnumerable<ImageFile> StreamFilesInFolderAsync(string folderPath, string rootPath,
+        IReadOnlyList<string>? excludeRoots = null,
+        [EnumeratorCancellation] CancellationToken ct = default)
+    {
+        var channel = Channel.CreateUnbounded<ImageFile>(new UnboundedChannelOptions { SingleReader = true });
+
+        var producer = Task.Run(() =>
+        {
+            try
+            {
+                if (!Directory.Exists(folderPath)) return;
+                foreach (var path in Directory.EnumerateFiles(folderPath))
+                {
+                    if (ct.IsCancellationRequested) break;
+                    if (!ImageFormatHelper.IsImageFile(path)) continue;
+                    var info = new FileInfo(path);
+                    var relative = Path.GetRelativePath(rootPath, path);
+                    var date = TryGetExifDate(path) ?? info.LastWriteTime;
+                    var file = new ImageFile(path, relative, info.Name, date, info.Length);
+                    if (excludeRoots == null || !excludeRoots.Any(
+                            root => File.Exists(Path.Combine(root, file.RelativePath))))
+                        channel.Writer.TryWrite(file);
+                }
+            }
+            finally
+            {
+                channel.Writer.Complete();
+            }
+        }, ct);
+
+        await foreach (var file in channel.Reader.ReadAllAsync(ct))
+            yield return file;
+
+        await producer;
+    }
 
     public Task<IReadOnlyList<string>> GetImageSubfoldersAsync(string folderPath) =>
         Task.Run<IReadOnlyList<string>>(() =>
