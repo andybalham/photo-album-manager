@@ -15,6 +15,7 @@ Grab the latest `PhotoAlbumManager.exe` from [Releases](../../releases/latest). 
 - **Copy** from source to target, preserving folder structure
 - **Remove** from target to a `_removed` subfolder
 - **Undo** removals, restoring files to their original location
+- **Album view** — full-screen thumbnail grid of the target folder with large preview alongside; navigate and remove without leaving the view
 - Remembers your folders, sort order, and window layout between sessions
 
 **Supported formats:** JPG, PNG, GIF, BMP, TIFF, WEBP, HEIC
@@ -30,14 +31,36 @@ Grab the latest `PhotoAlbumManager.exe` from [Releases](../../releases/latest). 
 └─────────────────────────┴──────────────────────────────────────┘
 ```
 
+Album view (F3 or "View Album" button on the Target tab):
+
+```
+┌──────────────────────┬──────────────────────────────────────────┐
+│  [thumb] [thumb] ... │  Large preview                           │
+│  [thumb] [thumb] ... │                                          │
+│  [thumb] [thumb] ... │  filename — date              [Remove]   │
+└──────────────────────┴──────────────────────────────────────────┘
+```
+
 ## Keyboard shortcuts
+
+### Main window
 
 | Key | Action |
 |-----|--------|
-| `←` / `→` | Previous / next image |
-| `C` | Copy to target |
-| `Delete` | Remove to _removed |
-| `U` | Undo removal |
+| `F2` | Toggle File List / Preview tab |
+| `F3` | Open Album view |
+| `←` / `→` | Previous / next image (Preview tab) |
+| `C` | Copy to target (Source tab, Preview tab) |
+| `R` | Remove to _removed (Target tab, Preview tab) |
+| `U` | Undo removal (Removed tab, Preview tab) |
+
+### Album view
+
+| Key | Action |
+|-----|--------|
+| `←` `↑` | Previous image |
+| `→` `↓` | Next image |
+| `Delete` | Remove selected image |
 
 ## Building from source
 

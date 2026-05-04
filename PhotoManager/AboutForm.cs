@@ -11,7 +11,7 @@ public class AboutForm : Form
         MaximizeBox = false;
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterParent;
-        ClientSize = new Size(400, 440);
+        ClientSize = new Size(400, 500);
         Font = new Font("Segoe UI", 9f);
 
         if (appIcon != null) Icon = appIcon;
@@ -51,16 +51,21 @@ public class AboutForm : Form
                 Keyboard Shortcuts
                 ──────────────────
                 F2              Toggle File List / Preview
+                F3              Open Album view
 
                 In Preview:
                   ←  /  →       Previous / Next image
                   C             Copy to Target  (Source tab)
                   R             Remove          (Target tab)
                   U             Undo remove     (Removed tab)
+
+                In Album view:
+                  ←  ↑  /  →  ↓   Previous / Next image
+                  Delete           Remove image
                 """,
             Font = new Font("Segoe UI", 9f),
             AutoSize = false,
-            Size = new Size(ClientSize.Width - 48, 200),
+            Size = new Size(ClientSize.Width - 48, 260),
             Location = new Point(24, 192),
         };
 
@@ -70,7 +75,7 @@ public class AboutForm : Form
             DialogResult = DialogResult.OK,
             Size = new Size(80, 28),
         };
-        btnOk.Location = new Point((ClientSize.Width - btnOk.Width) / 2, 400);
+        btnOk.Location = new Point((ClientSize.Width - btnOk.Width) / 2, 462);
         AcceptButton = btnOk;
 
         Controls.AddRange([pic, lblName, lblVersion, lblShortcuts, btnOk]);
