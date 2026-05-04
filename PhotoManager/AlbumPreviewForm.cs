@@ -14,6 +14,7 @@ public class AlbumPreviewForm : Form
     private readonly FileOperationService _fileOpService;
     private readonly ImageLoadService _imageService;
     private readonly AppSettings _settings;
+    private readonly SortOptions _sort;
     private readonly string _targetRoot;
 
     private List<ImageFile> _files = [];
@@ -36,12 +37,14 @@ public class AlbumPreviewForm : Form
         FileOperationService fileOpService,
         ImageLoadService imageService,
         AppSettings settings,
+        SortOptions sort,
         string targetRoot)
     {
         _scanService = scanService;
         _fileOpService = fileOpService;
         _imageService = imageService;
         _settings = settings;
+        _sort = sort;
         _targetRoot = targetRoot;
 
         Text = $"Album — {targetRoot}";
@@ -164,7 +167,7 @@ public class AlbumPreviewForm : Form
         var files = await _scanService.GetFilesInFolderAsync(_targetRoot, _targetRoot);
         if (ct.IsCancellationRequested) return;
 
-        _files = [.. files];
+        _files = [.. ApplySort(files)];
 
         if (_files.Count == 0)
         {
@@ -200,6 +203,14 @@ public class AlbumPreviewForm : Form
                 old?.Dispose();
             }
         }
+    }
+
+    private IEnumerable<ImageFile> ApplySort(IReadOnlyList<ImageFile> files)
+    {
+        IEnumerable<ImageFile> sorted = _sort.Field == SortField.DateCreated
+            ? files.OrderBy(f => f.DateModified)
+            : files.OrderBy(f => f.FileName, StringComparer.OrdinalIgnoreCase);
+        return _sort.Direction == SortDirection.Descending ? sorted.Reverse() : sorted;
     }
 
     // ── Thumbnail cells ───────────────────────────────────────────────────────
