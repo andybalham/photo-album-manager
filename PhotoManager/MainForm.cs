@@ -24,6 +24,9 @@ public partial class MainForm : Form
     private bool _isLoading = true;
     private Icon? _appIcon;
 
+    private Button? _btnViewAlbum;
+    private readonly ToolTip _viewAlbumTip = new();
+
     public MainForm(AppSettings settings, Icon? appIcon = null)
     {
         _settings = settings;
@@ -60,6 +63,12 @@ public partial class MainForm : Form
         targetTreePanel.Controls.Add(_targetTree);
         tabTarget.Controls.Add(targetTreePanel);
         BuildFolderTabHeader(tabTarget, btnSelectTarget);
+
+        _btnViewAlbum = new Button { Text = "View Album (F3)", Dock = DockStyle.Top, Height = 30 };
+        _btnViewAlbum.Click += OnViewAlbumClick;
+        var albumBtnPanel = new Panel { Dock = DockStyle.Top, Height = 30 };
+        albumBtnPanel.Controls.Add(_btnViewAlbum);
+        tabTarget.Controls.Add(albumBtnPanel);
 
         var removedTreePanel = new Panel { Dock = DockStyle.Fill };
         removedTreePanel.Controls.Add(_removedTree);
@@ -124,6 +133,7 @@ public partial class MainForm : Form
                 _targetTree.ShowWarning("Folder not found — please select again");
         }
 
+        UpdateViewAlbumButton();
         _isLoading = false;
     }
 
@@ -152,6 +162,7 @@ public partial class MainForm : Form
         _targetTree.ClearWarning();
         await _targetTree.LoadRootAsync(dlg.SelectedPath, dlg.SelectedPath);
         await LoadRemovedTreeAsync(dlg.SelectedPath);
+        UpdateViewAlbumButton();
     }
 
     private async Task LoadRemovedTreeAsync(string targetRoot)
@@ -350,7 +361,55 @@ public partial class MainForm : Form
                 rightTabControl.SelectedTab == tabFileList ? tabPreview : tabFileList;
             return true;
         }
+        if (keyData == Keys.F3)
+        {
+            OpenAlbumPreview();
+            return true;
+        }
         return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    // ── Album preview ─────────────────────────────────────────────────────────
+
+    private void UpdateViewAlbumButton()
+    {
+        if (_btnViewAlbum == null) return;
+        bool hasTarget = !string.IsNullOrEmpty(_settings.TargetFolderPath);
+        _btnViewAlbum.Enabled = hasTarget;
+        _viewAlbumTip.SetToolTip(_btnViewAlbum, hasTarget ? string.Empty : "Select a target folder first");
+    }
+
+    private void OnViewAlbumClick(object? sender, EventArgs e) => OpenAlbumPreview();
+
+    private void OpenAlbumPreview()
+    {
+        if (string.IsNullOrEmpty(_settings.TargetFolderPath))
+        {
+            statusLabel.Text = "Select a target folder first";
+            return;
+        }
+
+        using var form = new AlbumPreviewForm(_scanService, _fileOpService, _imageService, _settings.TargetFolderPath);
+        form.FileRemoved += OnAlbumFileRemoved;
+        form.ShowDialog(this);
+    }
+
+    private async void OnAlbumFileRemoved(object? sender, ImageFile file)
+    {
+        if (string.IsNullOrEmpty(_settings.TargetFolderPath)) return;
+
+        await _targetTree.LoadRootAsync(_settings.TargetFolderPath, _settings.TargetFolderPath);
+        await LoadRemovedTreeAsync(_settings.TargetFolderPath);
+
+        if (leftTabControl.SelectedTab == tabTarget)
+        {
+            var folderPath = _targetTree.SelectedFolderPath;
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                var sort = new SortOptions(_settings.SortField, _settings.SortDirection);
+                await _fileListPanel.LoadFolderAsync(folderPath, _settings.TargetFolderPath, sort);
+            }
+        }
     }
 
     // ── About ─────────────────────────────────────────────────────────────────
