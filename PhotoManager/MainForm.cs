@@ -389,7 +389,7 @@ public partial class MainForm : Form
             return;
         }
 
-        using var form = new AlbumPreviewForm(_scanService, _fileOpService, _imageService, _settings.TargetFolderPath);
+        using var form = new AlbumPreviewForm(_scanService, _fileOpService, _imageService, _settings, _settings.TargetFolderPath);
         form.FileRemoved += OnAlbumFileRemoved;
         form.ShowDialog(this);
     }

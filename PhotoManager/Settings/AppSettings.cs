@@ -15,4 +15,10 @@ public class AppSettings
     public int WindowLeft { get; set; } = -1;
     public int WindowTop { get; set; } = -1;
     public string WindowState { get; set; } = "Normal";
+    public int AlbumWindowWidth { get; set; } = 1100;
+    public int AlbumWindowHeight { get; set; } = 700;
+    public int AlbumWindowLeft { get; set; } = -1;
+    public int AlbumWindowTop { get; set; } = -1;
+    public string AlbumWindowState { get; set; } = "Normal";
+    public int AlbumSplitterPosition { get; set; } = 420;
 }

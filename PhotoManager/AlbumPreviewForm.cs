@@ -1,5 +1,6 @@
 using PhotoManager.Models;
 using PhotoManager.Services;
+using PhotoManager.Settings;
 
 namespace PhotoManager;
 
@@ -12,6 +13,7 @@ public class AlbumPreviewForm : Form
     private readonly FolderScanService _scanService;
     private readonly FileOperationService _fileOpService;
     private readonly ImageLoadService _imageService;
+    private readonly AppSettings _settings;
     private readonly string _targetRoot;
 
     private List<ImageFile> _files = [];
@@ -33,17 +35,18 @@ public class AlbumPreviewForm : Form
         FolderScanService scanService,
         FileOperationService fileOpService,
         ImageLoadService imageService,
+        AppSettings settings,
         string targetRoot)
     {
         _scanService = scanService;
         _fileOpService = fileOpService;
         _imageService = imageService;
+        _settings = settings;
         _targetRoot = targetRoot;
 
         Text = $"Album — {targetRoot}";
-        ClientSize = new Size(1100, 700);
         MinimumSize = new Size(700, 500);
-        StartPosition = FormStartPosition.CenterParent;
+        StartPosition = FormStartPosition.Manual;
         KeyPreview = true;
 
         _flowPanel = new FlowLayoutPanel
@@ -104,17 +107,46 @@ public class AlbumPreviewForm : Form
 
         Controls.Add(splitter);
         KeyDown += OnKeyDown;
+        FormClosed += OnFormClosed;
     }
 
     protected override async void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+
+        if (_settings.AlbumWindowWidth > 0 && _settings.AlbumWindowHeight > 0)
+            Size = new Size(_settings.AlbumWindowWidth, _settings.AlbumWindowHeight);
+        if (_settings.AlbumWindowLeft >= 0 && _settings.AlbumWindowTop >= 0)
+            Location = new Point(_settings.AlbumWindowLeft, _settings.AlbumWindowTop);
+        if (Enum.TryParse<FormWindowState>(_settings.AlbumWindowState, out var ws) && ws != FormWindowState.Minimized)
+            WindowState = ws;
+
         var sc = Controls.OfType<SplitContainer>().First();
         sc.Panel1MinSize = 200;
         sc.Panel2MinSize = 300;
-        sc.SplitterDistance = Math.Clamp(420, sc.Panel1MinSize, sc.Width - sc.Panel2MinSize);
+        int dist = _settings.AlbumSplitterPosition > 0 ? _settings.AlbumSplitterPosition : 420;
+        sc.SplitterDistance = Math.Clamp(dist, sc.Panel1MinSize, sc.Width - sc.Panel2MinSize);
+        sc.SplitterMoved += (_, _) => _settings.AlbumSplitterPosition = sc.SplitterDistance;
+
+        Resize += (_, _) => SaveWindowBounds();
+        Move += (_, _) => SaveWindowBounds();
+
         await LoadAlbumAsync();
     }
+
+    private void SaveWindowBounds()
+    {
+        _settings.AlbumWindowState = WindowState.ToString();
+        if (WindowState == FormWindowState.Normal)
+        {
+            _settings.AlbumWindowWidth = Width;
+            _settings.AlbumWindowHeight = Height;
+            _settings.AlbumWindowLeft = Left;
+            _settings.AlbumWindowTop = Top;
+        }
+    }
+
+    private void OnFormClosed(object? sender, FormClosedEventArgs e) => SaveWindowBounds();
 
     // ── Load ──────────────────────────────────────────────────────────────────
 
