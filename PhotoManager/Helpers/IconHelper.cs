@@ -7,7 +7,6 @@ namespace PhotoManager.Helpers;
 public static class IconHelper
 {
     private static Icon? _cachedIcon;
-    private static Bitmap? _cachedBitmap;
 
     public static Icon GetAppIcon()
     {
